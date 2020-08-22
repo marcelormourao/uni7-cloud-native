@@ -1,7 +1,7 @@
 version: '3'
 services:
     web:
-        image: marcelormourao/uni7-cloud-native:1.0.1
+        image: marcelormourao/uni7-cloud-native:1.0.2
         ports: 
             - "8080:8080"
         networks: 
