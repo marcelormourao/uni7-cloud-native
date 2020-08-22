@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 @RestController
 public class DemoController {
 	
@@ -20,6 +22,7 @@ public class DemoController {
 	
 	private final static Logger logger = LoggerFactory.getLogger(DemoController.class);
 
+	@CircuitBreaker(name = "other", fallbackMethod = "fallbackForOther")
 	@GetMapping(value="other", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> other() {
 		RestTemplate rest = new RestTemplate();
@@ -38,6 +41,11 @@ public class DemoController {
 		
 		return ResponseEntity.ok(Integer.parseInt(body));
 	}
+	
+	public ResponseEntity<String> fallbackForOther(Throwable t) {
+        logger.error("Inside fallbackForGetSeller, cause - {}", t.toString());
+        return ResponseEntity.ok("Sorry ... Service not available!!!");
+    }
 	
 	@GetMapping(value="sum", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Integer> sum(@RequestParam(required = true) Integer a, @RequestParam(required = true) Integer b) {
